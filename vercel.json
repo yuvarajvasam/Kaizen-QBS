@@ -5,9 +5,12 @@
   "functions": {
     "app/api/generate-pdf/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/health/route.ts": {
+      "maxDuration": 10
+    },
+    "app/api/test/route.ts": {
+      "maxDuration": 10
     }
-  },
-  "env": {
-    "GEMINI_API_KEY": "@gemini_api_key"
   }
 }

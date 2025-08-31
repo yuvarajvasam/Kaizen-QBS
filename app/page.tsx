@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { FileUploader } from '../components/FileUploader';
 import { ModuleSelector } from '../components/ModuleSelector';
@@ -17,6 +17,13 @@ export default function HomePage() {
     const [loadingMessage, setLoadingMessage] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [selectedModuleInfo, setSelectedModuleInfo] = useState<{ moduleNumber: number; selectedParts: string[] } | null>(null);
+
+    // Debug: Log when component mounts
+    useEffect(() => {
+        console.log('Kaizen QBS App loaded successfully');
+        console.log('Environment:', process.env.NODE_ENV);
+        console.log('Build time:', new Date().toISOString());
+    }, []);
 
     const handlePdfParsed = useCallback(async (text: string) => {
         setIsLoading(true);
