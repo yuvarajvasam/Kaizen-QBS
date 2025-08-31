@@ -21,7 +21,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS
 - **AI**: Google Gemini AI
-- **PDF Processing**: PDF.js, Puppeteer
+- **PDF Processing**: PDF.js, Browserless.io
 - **Markdown**: React Markdown, Remark GFM
 - **Deployment**: Vercel
 
@@ -32,6 +32,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 - Node.js 18+ 
 - npm or yarn
 - Google Gemini API key
+- Browserless.io API key
 
 ### Installation
 
@@ -50,6 +51,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
    Create a `.env.local` file in the root directory:
    ```env
    GEMINI_API_KEY=your_gemini_api_key_here
+   BROWSERLESS_API_KEY=your_browserless_api_key_here
    ```
 
 4. **Run the development server**
@@ -65,6 +67,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 ### Prerequisites
 - Vercel account
 - Google Gemini API key
+- Browserless.io API key
 
 ### Deployment Steps
 
@@ -90,6 +93,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
    In your Vercel project settings, add:
    ```
    GEMINI_API_KEY=your_gemini_api_key_here
+   BROWSERLESS_API_KEY=your_browserless_api_key_here
    ```
 
 4. **Configure Function Timeout**
@@ -100,6 +104,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `GEMINI_API_KEY` | Your Google Gemini API key | Yes |
+| `BROWSERLESS_API_KEY` | Your Browserless.io API key for PDF generation | Yes |
 
 ## Usage
 
@@ -134,7 +139,7 @@ ai-question-bank-solver/
 
 ## API Routes
 
-- `POST /api/generate-pdf`: Generates PDF from HTML content using Puppeteer
+- `POST /api/generate-pdf`: Generates PDF from HTML content using Browserless.io
 
 ## Contributing
 

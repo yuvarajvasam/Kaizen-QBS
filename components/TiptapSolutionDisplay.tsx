@@ -4,62 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { marked } from 'marked';
 import { DownloadIcon, FileTextIcon } from './icons';
 
-// Dynamic imports for client-side PDF generation
-const generatePDF = async (html: string, filename: string) => {
-    const { jsPDF } = await import('jspdf');
-    const html2canvas = await import('html2canvas');
-    
-    // Create a temporary div to render the HTML
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.top = '0';
-    tempDiv.style.width = '800px';
-    tempDiv.style.backgroundColor = 'white';
-    tempDiv.style.padding = '20px';
-    document.body.appendChild(tempDiv);
-
-    try {
-        // Convert HTML to canvas
-        const canvas = await html2canvas.default(tempDiv, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff'
-        });
-
-        // Create PDF
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        
-        const imgWidth = 210; // A4 width in mm
-        const pageHeight = 295; // A4 height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-
-        let position = 0;
-
-        // Add first page
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        // Add additional pages if needed
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-        }
-
-        // Download the PDF
-        pdf.save(filename);
-    } finally {
-        // Clean up
-        document.body.removeChild(tempDiv);
-    }
-};
-
 interface TiptapSolutionDisplayProps {
     markdown: string;
     moduleInfo?: { moduleNumber: number; selectedParts: string[] } | null;
@@ -129,136 +73,47 @@ export const TiptapSolutionDisplay: React.FC<TiptapSolutionDisplayProps> = ({ ma
             
             // Create a styled HTML document
             const styledHtml = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${generateTitle()}</title>
-                    <style>
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
-                        body { 
-                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                            line-height: 1.6; 
-                            margin: 20px; 
-                            color: #333;
-                            max-width: 800px;
-                            margin: 20px auto;
-                        }
-                        h1, h2, h3 { 
-                            color: #2c3e50; 
-                            padding-bottom: 10px;
-                        }
-                        h1 { font-size: 2em; margin-top: 0; }
-                        h2 { font-size: 1.5em; }
-                        h3 { font-size: 1.2em; }
-                        
-                        table { 
-                            border-collapse: collapse; 
-                            width: 100%; 
-                            margin: 20px 0;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-                        th { 
-                            background-color: #3498db; 
-                            color: white; 
-                            padding: 12px 8px; 
-                            text-align: left; 
-                            font-weight: bold;
-                        }
-                        td { 
-                            border: 1px solid #ddd; 
-                            padding: 12px 8px; 
-                            text-align: left; 
-                        }
-                        tr:nth-child(even) { background-color: #f8f9fa; }
-                        
-                        ul, ol { 
-                            margin: 15px 0; 
-                            padding-left: 30px; 
-                        }
-                        ol { 
-                            counter-reset: item;
-                            list-style-type: decimal;
-                        }
-                        ol li { 
-                            margin: 8px 0; 
-                            display: list-item;
-                            list-style-position: outside;
-                        }
-                        ul li { 
-                            margin: 8px 0; 
-                            display: list-item;
-                        }
-                        
-                        p { margin: 15px 0; }
-                        
-                        code { 
-                            background-color: #f4f4f4; 
-                            padding: 2px 6px; 
-                            border-radius: 4px; 
-                            font-family: 'Courier New', monospace;
-                        }
-                        
-                        pre { 
-                            background-color: #f8f9fa; 
-                            padding: 15px; 
-                            border-radius: 8px; 
-                            overflow-x: auto;
-                            border-left: 4px solid #3498db;
-                        }
-                        
-                        blockquote { 
-                            border-left: 4px solid #3498db; 
-                            margin: 20px 0; 
-                            padding: 10px 20px; 
-                            background-color: #f8f9fa;
-                            font-style: italic;
-                        }
-                        
-                        .header { 
-                            text-align: center; 
-                            margin-bottom: 40px; 
-                            border-bottom: 3px solid #3498db; 
-                            padding-bottom: 30px; 
-                        }
-                        .footer { 
-                            text-align: center; 
-                            margin-top: 40px; 
-                            font-size: 14px; 
-                            color: #7f8c8d; 
-                            border-top: 1px solid #ddd; 
-                            padding-top: 20px; 
-                        }
-                        .content { margin: 0 auto; }
-                        
-                        @media print {
-                            .page-break { page-break-before: always; }
-                            body { margin: 15px; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>${generateTitle()}</h1>
-                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-
-                    </div>
-                    <div class="content">
-                        ${html}
-                    </div>
-                    <div class="footer">
-                        <p>Generated by Kaizen Question Bank Solver</p>
-                        <p>This document contains AI-generated content for educational purposes</p>
-                        <p>Made with ❤️ by <a href="https://www.linkedin.com/in/yuvarajvasam/" target="_blank" rel="noopener noreferrer">Yuvaraj Vasam</a></p>
-                    </div>
-                </body>
-                </html>
+                <div class="header">
+                    <h1>${generateTitle()}</h1>
+                    <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                </div>
+                <div class="content">
+                    ${html}
+                </div>
+                <div class="footer">
+                    <p>Generated by Kaizen Question Bank Solver</p>
+                    <p>This document contains AI-generated content for educational purposes</p>
+                    <p>Made with ❤️ by <a href="https://www.linkedin.com/in/yuvarajvasam/" target="_blank" rel="noopener noreferrer">Yuvaraj Vasam</a></p>
+                </div>
             `;
 
-            // Use client-side PDF generation
-            await generatePDF(styledHtml, `${generateFilename()}.pdf`);
+            // Call the server-side PDF generation API
+            const response = await fetch('/api/generate-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    html: styledHtml,
+                    filename: `${generateFilename()}.pdf`
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to generate PDF');
+            }
+
+            // Get the PDF blob and download it
+            const pdfBlob = await response.blob();
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${generateFilename()}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
         } catch (error) {
             console.error('PDF export failed:', error);
