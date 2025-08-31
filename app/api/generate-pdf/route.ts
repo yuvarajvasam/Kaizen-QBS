@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from 'chrome-aws-lambda';
 
 export async function POST(request: NextRequest) {
     try {
@@ -9,19 +10,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
         }
 
-        // Launch Puppeteer with serverless-optimized settings
+        // Launch Puppeteer with chrome-aws-lambda for Vercel compatibility
         const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--no-first-run',
-                '--no-zygote',
-                '--single-process',
-                '--disable-extensions'
-            ]
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless,
         });
 
         const page = await browser.newPage();
@@ -31,7 +25,7 @@ export async function POST(request: NextRequest) {
 
         // Generate PDF with proper settings
         const pdfBuffer = await page.pdf({
-            format: 'A4',
+            format: 'a4',
             printBackground: true,
             margin: {
                 top: '10mm',
