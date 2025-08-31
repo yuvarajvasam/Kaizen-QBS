@@ -5,16 +5,16 @@ const nextConfig = {
   },
   // Optimize for Vercel deployment
   experimental: {
-    serverComponentsExternalPackages: ['puppeteer-core', 'chrome-aws-lambda']
+    serverComponentsExternalPackages: ['puppeteer-core', '@sparticuz/chromium']
   },
   // Ensure proper image optimization
   images: {
     unoptimized: false,
   },
-  // Handle chrome-aws-lambda in serverless environment
+  // Handle @sparticuz/chromium in serverless environment
   webpack: (config, { isServer }) => {
     if (isServer) {
-      config.externals.push('puppeteer-core', 'chrome-aws-lambda');
+      config.externals.push('puppeteer-core', '@sparticuz/chromium');
     }
     return config;
   },

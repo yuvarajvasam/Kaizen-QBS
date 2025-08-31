@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
-import chromium from 'chrome-aws-lambda';
+import chromium from '@sparticuz/chromium';
 
 export async function POST(request: NextRequest) {
     try {
@@ -10,12 +10,16 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
         }
 
-        // Launch Puppeteer with chrome-aws-lambda for Vercel compatibility
+        // Launch Puppeteer with @sparticuz/chromium for Vercel compatibility
         const browser = await puppeteer.launch({
             args: chromium.args,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath,
-            headless: chromium.headless,
+            defaultViewport: {
+                width: 1200,
+                height: 800,
+                deviceScaleFactor: 1,
+            },
+            executablePath: await chromium.executablePath(),
+            headless: true,
         });
 
         const page = await browser.newPage();
