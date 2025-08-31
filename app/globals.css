@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-200;
+  }
+  
+  /* Improve touch targets on mobile */
+  button, input, select, textarea {
+    @apply touch-manipulation;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  html, body {
+    @apply overflow-x-hidden;
+  }
+}
+
+@layer components {
+  /* Custom markdown styling for better question-answer separation */
+  .markdown-body h3 {
+    @apply text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3 mt-6;
+  }
+  
+  .markdown-body h5 {
+    @apply text-base font-semibold text-gray-800 dark:text-gray-200 mb-3 mt-4;
+  }
+  
+  .markdown-body h6 {
+    @apply text-base font-semibold text-gray-800 dark:text-gray-200 mb-3 mt-4;
+  }
+  
+  .markdown-body p {
+    @apply mb-3;
+  }
+  
+  .markdown-body strong {
+    @apply font-semibold text-gray-800 dark:text-gray-200;
+  }
+  
+  .markdown-body ul {
+    @apply mb-4;
+  }
+  
+  .markdown-body li {
+    @apply mb-1;
+  }
+  
+  .markdown-body hr {
+    @apply my-6 border-gray-300 dark:border-gray-600;
+  }
+  
+  /* Better spacing for question-answer pairs */
+  .markdown-body h3 + p,
+  .markdown-body h5 + p,
+  .markdown-body h6 + p {
+    @apply mt-2;
+  }
+  
+  .markdown-body h3 + ul,
+  .markdown-body h5 + ul,
+  .markdown-body h6 + ul {
+    @apply mt-3;
+  }
+  
+  .markdown-body h3 + table,
+  .markdown-body h5 + table,
+  .markdown-body h6 + table {
+    @apply mt-3;
+  }
+  
+  /* Mobile-specific improvements */
+  @media (max-width: 640px) {
+    .markdown-body h3 {
+      @apply text-base font-semibold mb-2 mt-4;
+    }
+    
+    .markdown-body h5,
+    .markdown-body h6 {
+      @apply text-sm font-semibold mb-2 mt-3;
+    }
+    
+    .markdown-body p {
+      @apply mb-2 text-sm;
+    }
+    
+    .markdown-body ul {
+      @apply mb-3;
+    }
+    
+    .markdown-body li {
+      @apply mb-1 text-sm;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "AI Question Bank Solver",
+  "description": "An application that uses AI to generate detailed solutions for college question banks. Users can upload a PDF, select questions, and receive formatted answers, with an option to group related questions for a cohesive study guide.",
+  "requestFramePermissions": []
+}
