@@ -9,10 +9,19 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
         }
 
-        // Launch Puppeteer
+        // Launch Puppeteer with serverless-optimized settings
         const browser = await puppeteer.launch({
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process',
+                '--disable-extensions'
+            ]
         });
 
         const page = await browser.newPage();
