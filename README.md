@@ -1,23 +1,30 @@
-<div align="center">
+npm <div align="center">
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# AI Question Bank Solver
+# Kaizen Question Bank Solver
 
-A Next.js application that uses AI to parse question bank PDFs and generate detailed solutions.
+An AI-powered application that transforms question bank PDFs into comprehensive study guides with detailed solutions. Built with Next.js, React, and Google's Gemini AI.
 
 ## Features
 
-- Upload and parse question bank PDFs
-- AI-powered question structuring and organization
-- Generate concise, focused solutions (150 words max per answer)
-- **Rich text editing with Tiptap** - Edit and format your solutions with a modern markdown editor
-- **PDF export functionality** - Download your solutions as professional PDFs via HTML conversion
-- **Markdown export** - Save solutions as .md files
-- **HTML export** - Save solutions as HTML files
-- **Smart formatting** - Automatic table generation for comparison questions
-- Modern, responsive UI built with Tailwind CSS
-- Built with Next.js 14 and React 19
+- 📄 **PDF Upload & Processing**: Drag and drop PDF question banks for AI analysis
+- 🧠 **AI-Powered Solutions**: Generate detailed answers using Google's Gemini AI
+- 📚 **Module Organization**: Automatically structure questions into modules and parts
+- 📊 **Part-Based Solutions**: Clear separation of Part A, B, and C solutions with proper numbering
+- 📱 **Mobile Responsive**: Optimized for all device sizes
+- 🌙 **Dark Mode**: Toggle between light and dark themes
+- 📤 **Multiple Export Formats**: Download solutions as Markdown, HTML, or PDF
+- ⚡ **Real-time Processing**: Instant AI analysis and solution generation
+
+## Tech Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS
+- **AI**: Google Gemini AI
+- **PDF Processing**: PDF.js, Puppeteer
+- **Markdown**: React Markdown, Remark GFM
+- **Deployment**: Vercel
 
 ## Getting Started
 
@@ -25,82 +32,127 @@ A Next.js application that uses AI to parse question bank PDFs and generate deta
 
 - Node.js 18+ 
 - npm or yarn
-- Gemini API key from Google AI Studio
+- Google Gemini API key
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd ai-question-bank-solver
-```
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ai-question-bank-solver
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-3. Create a `.env.local` file in the root directory and add your Gemini API key:
-```bash
-GEMINI_API_KEY=your_gemini_api_key_here
-```
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+   ```env
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
 
-4. Run the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-## Available Scripts
+## Deployment to Vercel
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+### Prerequisites
+- Vercel account
+- Google Gemini API key
 
-## Debug and Testing
+### Deployment Steps
 
-Visit `/debug` in your browser to access the PDF debug page, which helps troubleshoot PDF processing issues and shows extracted text content.
+1. **Install Vercel CLI** (optional)
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Deploy to Vercel**
+   
+   **Option A: Using Vercel Dashboard**
+   - Push your code to GitHub
+   - Connect your repository to Vercel
+   - Add environment variable `GEMINI_API_KEY` in Vercel dashboard
+   - Deploy
+
+   **Option B: Using Vercel CLI**
+   ```bash
+   vercel
+   ```
+
+3. **Set Environment Variables**
+   In your Vercel project settings, add:
+   ```
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+4. **Configure Function Timeout**
+   The PDF generation function is configured with a 30-second timeout in `vercel.json`
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GEMINI_API_KEY` | Your Google Gemini API key | Yes |
+
+## Usage
+
+1. **Upload PDF**: Drag and drop your question bank PDF
+2. **Select Module**: Choose the module you want to solve
+3. **Select Parts**: Choose which parts (A, B, C) to include
+4. **Generate Solutions**: Click "Generate Solution" to get AI-powered answers
+5. **Export**: Download your solutions in Markdown, HTML, or PDF format
 
 ## Project Structure
 
 ```
+ai-question-bank-solver/
 ├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   ├── globals.css        # Global styles
 │   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Home page
-│   ├── debug/             # Debug and testing pages
-│   │   └── page.tsx       # PDF debug page
-│   └── globals.css        # Global styles
-├── components/             # React components
-├── services/               # API services
-├── next.config.js         # Next.js configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-└── tsconfig.json          # TypeScript configuration
+│   └── page.tsx           # Main page
+├── components/            # React components
+│   ├── Button.tsx         # Reusable button component
+│   ├── Card.tsx           # Card layout component
+│   ├── FileUploader.tsx   # PDF upload component
+│   ├── ModuleSelector.tsx # Module selection component
+│   ├── SolutionDisplay.tsx # Solution display component
+│   └── ...                # Other components
+├── services/              # Business logic
+│   └── geminiService.ts   # AI service integration
+├── public/                # Static assets
+├── vercel.json            # Vercel configuration
+└── next.config.js         # Next.js configuration
 ```
 
-## Technologies Used
+## API Routes
 
-- **Next.js 14** - React framework
-- **React 19** - UI library
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Tiptap** - Modern rich text editor with markdown support
-- **Marked** - Markdown to HTML conversion
-- **Google Gemini AI** - AI processing
+- `POST /api/generate-pdf`: Generates PDF from HTML content using Puppeteer
 
-## Environment Variables
+## Contributing
 
-- `GEMINI_API_KEY` - Your Google Gemini API key
-
-## Deployment
-
-The application can be deployed to Vercel, Netlify, or any other platform that supports Next.js.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License.
+
+## Support
+
+For support, email support@example.com or create an issue in the repository.
+
+---
+
+**Made with ❤️ by [Yuvaraj Vasam](https://www.linkedin.com/in/yuvarajvasam/)**
