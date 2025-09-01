@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
         }
 
-        // Return the HTML content for client-side printing
+        // Return the HTML content for client-side printing (no server-side PDF generation)
         return NextResponse.json({
             success: true,
             html: html,
