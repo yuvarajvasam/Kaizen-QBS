@@ -37,4 +37,4 @@ vercel --prod
 
 echo "✅ Deployment complete!"
 echo "🌐 Check your Vercel dashboard for the deployment URL"
-echo "🔧 Don't forget to set GEMINI_API_KEY and BROWSERLESS_API_KEY in your Vercel environment variables"
+echo "🔧 Don't forget to set GEMINI_API_KEY in your Vercel environment variables"

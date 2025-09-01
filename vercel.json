@@ -16,7 +16,6 @@
     }
   },
   "env": {
-    "GEMINI_API_KEY": "@gemini_api_key",
-    "BROWSERLESS_API_KEY": "@browserless_api_key"
+    "GEMINI_API_KEY": "@gemini_api_key"
   }
 }
