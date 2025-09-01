@@ -26,7 +26,7 @@ Try accessing these endpoints to verify deployment:
 - Go to your Vercel dashboard
 - Navigate to Functions tab
 - Check for any error logs
-- Look for Puppeteer or API-related errors
+- Look for API-related errors
 
 #### 5. Common Causes of 404 Errors
 
@@ -65,26 +65,17 @@ echo $GEMINI_API_KEY
 
 ### PDF Generation Issues
 
-#### Puppeteer Timeout
+#### Print Dialog Issues
 **Symptoms:**
-- PDF generation takes too long
-- Function timeout errors
-- 500 errors on PDF download
+- Print dialog doesn't open
+- Popup blocked errors
+- Print functionality fails
 
 **Solution:**
-- Function timeout is set to 30 seconds in `vercel.json`
-- Consider optimizing PDF content
-- Check function logs for specific errors
-
-#### Puppeteer Not Working
-**Symptoms:**
-- PDF generation fails
-- Browser launch errors
-
-**Solution:**
-- Puppeteer is configured for serverless deployment
-- Check Vercel function logs
-- Ensure proper Chrome flags are set
+- Allow popups for the website
+- Check browser print settings
+- Ensure JavaScript is enabled
+- Try refreshing the page and retrying
 
 ### Performance Issues
 
@@ -98,7 +89,7 @@ echo $GEMINI_API_KEY
 #### Memory Issues
 **Solutions:**
 - Monitor function memory usage
-- Optimize PDF generation
+- Optimize content generation
 - Consider reducing bundle size
 
 ### Debugging Steps

@@ -18,7 +18,7 @@
 ### ✅ Dependencies
 - [ ] All dependencies are in `package.json`
 - [ ] No unnecessary dependencies
-- [ ] Puppeteer is properly configured for serverless
+- [ ] PDF parsing libraries are properly configured
 
 ## Deployment Steps
 
@@ -121,20 +121,17 @@ npx tsc --noEmit
 - Ensure `GEMINI_API_KEY` is set in Vercel dashboard
 - Redeploy after adding environment variables
 
-#### PDF Generation Timeout
-- Function timeout is set to 30 seconds in `vercel.json`
-- Consider optimizing PDF generation for large documents
-
-#### Puppeteer Issues
-- Puppeteer is configured for serverless deployment
-- Check Vercel function logs for any Puppeteer errors
+#### Print Functionality Issues
+- Print dialog uses browser's native functionality
+- Ensure popups are allowed for the website
+- Check browser print settings if issues occur
 
 ## Performance Optimization
 
 ### ✅ Optimizations Applied
 - [ ] Next.js 14 optimizations enabled
 - [ ] Image optimization configured
-- [ ] Server components external packages configured
+- [ ] PDF parsing libraries optimized
 - [ ] Webpack optimizations for serverless
 
 ### ✅ Monitoring
