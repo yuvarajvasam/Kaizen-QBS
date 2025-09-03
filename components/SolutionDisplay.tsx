@@ -4,7 +4,8 @@ import remarkGfm from 'remark-gfm';
 import { marked } from 'marked';
 import { Card } from './Card';
 import { Button } from './Button';
-import { DownloadIcon, BotIcon, FileTextIcon } from './icons';
+import { BotIcon, FileTextIcon } from './icons';
+import { ClientSidePDFGenerator } from './ClientSidePDFGenerator';
 
 
 interface SolutionDisplayProps {
@@ -14,7 +15,7 @@ interface SolutionDisplayProps {
 }
 
 export const SolutionDisplay: React.FC<SolutionDisplayProps> = ({ markdown, moduleInfo, onBackToModuleSelection }) => {
-    const [isPdfLoading, setIsPdfLoading] = useState<boolean>(false);
+    const [pdfError, setPdfError] = useState<string>('');
 
     // Generate title based on module and parts
     const generateTitle = () => {
@@ -59,166 +60,8 @@ export const SolutionDisplay: React.FC<SolutionDisplayProps> = ({ markdown, modu
         }
     }, [moduleInfo]);
 
-    const handlePrintPdf = async () => {
-        setIsPdfLoading(true);
-        try {
-            // Convert markdown to HTML with proper styling
-            const html = marked(markdown);
-            
-            // Create a complete HTML document with styling
-            const fullHtml = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${generateTitle()}</title>
-                    <meta charset="utf-8">
-                    <style>
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
-                        body { 
-                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                            line-height: 1.6; 
-                            margin: 20px; 
-                            color: #333;
-                            max-width: 800px;
-                            margin: 20px auto;
-                        }
-                        h1, h2, h3 { 
-                            color: #2c3e50; 
-                            padding-bottom: 10px;
-                        }
-                        h1 { font-size: 2em; margin-top: 0; }
-                        h2 { font-size: 1.5em; }
-                        h3 { font-size: 1.2em; }
-                        
-                        table { 
-                            border-collapse: collapse; 
-                            width: 100%; 
-                            margin: 20px 0;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-                        th { 
-                            background-color: #3498db; 
-                            color: white; 
-                            padding: 12px 8px; 
-                            text-align: left; 
-                            font-weight: bold;
-                        }
-                        td { 
-                            border: 1px solid #ddd; 
-                            padding: 12px 8px; 
-                            text-align: left; 
-                        }
-                        tr:nth-child(even) { background-color: #f8f9fa; }
-                        
-                        ul, ol { 
-                            margin: 15px 0; 
-                            padding-left: 30px; 
-                        }
-                        ol { 
-                            counter-reset: item;
-                            list-style-type: decimal;
-                        }
-                        ol li { 
-                            margin: 8px 0; 
-                            display: list-item;
-                            list-style-position: outside;
-                        }
-                        ul li { 
-                            margin: 8px 0; 
-                            display: list-item;
-                        }
-                        
-                        p { margin: 15px 0; }
-                        
-                        code { 
-                            background-color: #f4f4f4; 
-                            padding: 2px 6px; 
-                            border-radius: 4px; 
-                            font-family: 'Courier New', monospace;
-                        }
-                        
-                        pre { 
-                            background-color: #f8f9fa; 
-                            padding: 15px; 
-                            border-radius: 8px; 
-                            overflow-x: auto;
-                            border-left: 4px solid #3498db;
-                        }
-                        
-                        blockquote { 
-                            border-left: 4px solid #3498db; 
-                            margin: 20px 0; 
-                            padding: 10px 20px; 
-                            background-color: #f8f9fa;
-                            font-style: italic;
-                        }
-                        
-                        .header { 
-                            text-align: center; 
-                            margin-bottom: 40px; 
-                            border-bottom: 3px solid #3498db; 
-                            padding-bottom: 30px; 
-                        }
-                        .footer { 
-                            text-align: center; 
-                            margin-top: 40px; 
-                            font-size: 14px; 
-                            color: #7f8c8d; 
-                            border-top: 1px solid #ddd; 
-                            padding-top: 20px; 
-                        }
-                        .content { margin: 0 auto; }
-                        
-                        @media print {
-                            .page-break { page-break-before: always; }
-                            body { margin: 15px; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>${generateTitle()}</h1>
-                        <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
-                    </div>
-                    <div class="content">
-                        ${html}
-                    </div>
-                    <div class="footer">
-                        <p>Generated by Kaizen Question Bank Solver</p>
-                        <p>This document contains AI-generated content for educational purposes</p>
-                        <p>Made with ❤️ by <a href="https://www.linkedin.com/in/yuvarajvasam/" target="_blank" rel="noopener noreferrer">Yuvaraj Vasam</a></p>
-                    </div>
-                </body>
-                </html>
-            `;
-
-            // Open a new window with the HTML content
-            const printWindow = window.open('', '_blank');
-            if (printWindow) {
-                printWindow.document.write(fullHtml);
-                printWindow.document.close();
-                
-                // Wait for content to load, then print
-                printWindow.onload = () => {
-                    printWindow.print();
-                    // Close the window after printing
-                    setTimeout(() => {
-                        printWindow.close();
-                    }, 1000);
-                };
-            } else {
-                throw new Error('Popup blocked. Please allow popups for this site.');
-            }
-
-        } catch (error) {
-            console.error('Print failed:', error);
-            alert('Failed to open print dialog. Please try again.');
-        } finally {
-            setIsPdfLoading(false);
-        }
+    const handlePDFError = (error: string) => {
+        setPdfError(error);
     };
 
     const handleDownloadMarkdown = () => {
@@ -367,20 +210,22 @@ export const SolutionDisplay: React.FC<SolutionDisplayProps> = ({ markdown, modu
                                     <FileTextIcon className="w-4 h-4 mr-2" />
                                     HTML
                                 </Button>
-                                <Button 
-                                    onClick={handlePrintPdf} 
-                                    variant="outline" 
-                                    className="w-full sm:w-auto"
-                                    disabled={isPdfLoading}
-                                >
-                                    <DownloadIcon className="w-4 h-4 mr-2" />
-                                    {isPdfLoading ? 'Preparing...' : 'Print PDF'}
-                                </Button>
+                                <ClientSidePDFGenerator
+                                    markdown={markdown}
+                                    title={generateTitle()}
+                                    filename={generateFilename()}
+                                    onError={handlePDFError}
+                                />
                             </div>
                         </div>
                         <div className="prose prose-sm max-w-none p-3 sm:p-4 border border-gray-200 dark:border-gray-600 rounded-md h-[50vh] sm:h-[60vh] overflow-y-auto markdown-body bg-white dark:bg-gray-800 transition-colors duration-200 dark:prose-invert">
                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
                         </div>
+                        {pdfError && (
+                            <div className="mt-4 text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-700 rounded-md p-3 text-center transition-colors duration-200">
+                                PDF Error: {pdfError}
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="flex flex-col items-center justify-center h-[50vh] sm:h-[60vh] bg-gray-50 dark:bg-gray-700 rounded-md p-4 sm:p-6 text-center transition-colors duration-200">

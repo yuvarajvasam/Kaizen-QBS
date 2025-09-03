@@ -21,7 +21,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS
 - **AI**: Google Gemini AI
-- **PDF Processing**: PDF.js, Browser Print API
+- **PDF Processing**: PDF.js, @react-pdf/renderer (client-side PDF generation)
 - **Markdown**: React Markdown, Remark GFM
 - **Deployment**: Vercel
 
@@ -107,7 +107,7 @@ An AI-powered application that transforms question bank PDFs into comprehensive 
 2. **Select Module**: Choose the module you want to solve
 3. **Select Parts**: Choose which parts (A, B, C) to include
 4. **Generate Solutions**: Click "Generate Solution" to get AI-powered answers
-5. **Export**: Download your solutions in Markdown, HTML, or Print to PDF format
+5. **Export**: Download your solutions in Markdown, HTML, or PDF format (client-side generation)
 
 ## Project Structure
 
@@ -121,6 +121,7 @@ ai-question-bank-solver/
 ├── components/            # React components
 │   ├── Button.tsx         # Reusable button component
 │   ├── Card.tsx           # Card layout component
+│   ├── ClientSidePDFGenerator.tsx # Client-side PDF generation
 │   ├── FileUploader.tsx   # PDF upload component
 │   ├── ModuleSelector.tsx # Module selection component
 │   ├── SolutionDisplay.tsx # Solution display component
@@ -132,9 +133,13 @@ ai-question-bank-solver/
 └── next.config.js         # Next.js configuration
 ```
 
-## API Routes
+## PDF Generation
 
-- `POST /api/generate-pdf`: Prepares HTML content for client-side printing
+The application now uses client-side PDF generation with `@react-pdf/renderer`, which:
+- Generates much smaller PDF files (typically < 1MB vs 50MB+ with image-based generation)
+- Creates proper text-based PDFs instead of image-based ones
+- Works entirely in the browser without server-side dependencies
+- Provides better text searchability and accessibility
 
 ## Contributing
 
