@@ -167,6 +167,164 @@ const convertMarkdownToPDFContent = (markdown: string) => {
     return elements;
 };
 
+// Function to print HTML version
+const printHTMLVersion = (markdown: string, title: string) => {
+    try {
+        // Convert markdown to HTML
+        const html = marked(markdown);
+        
+        // Create a complete HTML document with print-friendly styling
+        const fullHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>${title}</title>
+                <meta charset="utf-8">
+                <style>
+                    @media print {
+                        body { margin: 0; }
+                        .no-print { display: none; }
+                    }
+                    body { 
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        line-height: 1.6; 
+                        margin: 20px; 
+                        color: #333;
+                        max-width: 800px;
+                        margin: 20px auto;
+                    }
+                    h1, h2, h3 { 
+                        color: #2c3e50; 
+                        padding-bottom: 10px;
+                    }
+                    h1 { font-size: 2em; margin-top: 0; }
+                    h2 { font-size: 1.5em; }
+                    h3 { font-size: 1.2em; }
+                    
+                    table { 
+                        border-collapse: collapse; 
+                        width: 100%; 
+                        margin: 20px 0;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+                    th { 
+                        background-color: #3498db; 
+                        color: white; 
+                        padding: 12px 8px; 
+                        text-align: left; 
+                        font-weight: bold;
+                    }
+                    td { 
+                        border: 1px solid #ddd; 
+                        padding: 12px 8px; 
+                        text-align: left; 
+                    }
+                    tr:nth-child(even) { background-color: #f8f9fa; }
+                    
+                    ul, ol { 
+                        margin: 15px 0; 
+                        padding-left: 30px; 
+                    }
+                    ol { 
+                        counter-reset: item;
+                        list-style-type: decimal;
+                    }
+                    ol li { 
+                        margin: 8px 0; 
+                        display: list-item;
+                        list-style-position: outside;
+                    }
+                    ul li { 
+                        margin: 8px 0; 
+                        display: list-item;
+                    }
+                    
+                    p { margin: 15px 0; }
+                    
+                    code { 
+                        background-color: #f4f4f4; 
+                        padding: 2px 6px; 
+                        border-radius: 4px; 
+                        font-family: 'Courier New', monospace;
+                    }
+                    
+                    pre { 
+                        background-color: #f8f9fa; 
+                        padding: 15px; 
+                        border-radius: 8px; 
+                        overflow-x: auto;
+                        border-left: 4px solid #3498db;
+                    }
+                    
+                    blockquote { 
+                        border-left: 4px solid #3498db; 
+                        margin: 20px 0; 
+                        padding: 10px 20px; 
+                        background-color: #f8f9fa;
+                        font-style: italic;
+                    }
+                    
+                    .header { 
+                        text-align: center; 
+                        margin-bottom: 40px; 
+                        border-bottom: 3px solid #3498db; 
+                        padding-bottom: 30px; 
+                    }
+                    .footer { 
+                        text-align: center; 
+                        margin-top: 40px; 
+                        font-size: 14px; 
+                        color: #7f8c8d; 
+                        border-top: 1px solid #ddd; 
+                        padding-top: 20px; 
+                    }
+                    .content { margin: 0 auto; }
+                    
+                    @media print {
+                        .page-break { page-break-before: always; }
+                        body { margin: 15px; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>${title}</h1>
+                    <p><strong>Generated on:</strong> ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                </div>
+                <div class="content">
+                    ${html}
+                </div>
+                <div class="footer">
+                    <p>Generated by Kaizen Question Bank Solver</p>
+                    <p>This document contains AI-generated content for educational purposes</p>
+                    <p>Made with ❤️ by <a href="https://www.linkedin.com/in/yuvarajvasam/" target="_blank" rel="noopener noreferrer">Yuvaraj Vasam</a></p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Open a new window with the HTML content
+        const printWindow = window.open('', '_blank');
+        if (printWindow) {
+            printWindow.document.write(fullHtml);
+            printWindow.document.close();
+            
+            // Wait for content to load, then print
+            printWindow.onload = () => {
+                printWindow.print();
+                // Close the window after printing
+                setTimeout(() => {
+                    printWindow.close();
+                }, 1000);
+            };
+        } else {
+            console.warn('Popup blocked. Please allow popups for this site.');
+        }
+    } catch (error) {
+        console.error('HTML print failed:', error);
+    }
+};
+
 export const ClientSidePDFGenerator: React.FC<ClientSidePDFGeneratorProps> = ({
     markdown,
     title,
@@ -209,7 +367,7 @@ export const ClientSidePDFGenerator: React.FC<ClientSidePDFGeneratorProps> = ({
             // Generate PDF blob
             const blob = await pdf(<MyDocument />).toBlob();
             
-            // Create download link
+            // Create download link for PDF
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
@@ -218,6 +376,9 @@ export const ClientSidePDFGenerator: React.FC<ClientSidePDFGeneratorProps> = ({
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
+            
+            // Also print the HTML version
+            printHTMLVersion(markdown, title);
             
             onComplete?.();
         } catch (error) {
@@ -240,14 +401,14 @@ export const ClientSidePDFGenerator: React.FC<ClientSidePDFGeneratorProps> = ({
                 {isGenerating ? (
                     <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Generating PDF...
+                        Generating PDF & Printing...
                     </>
                 ) : (
                     <>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Download PDF
+                        Download PDF & Print
                     </>
                 )}
             </button>
